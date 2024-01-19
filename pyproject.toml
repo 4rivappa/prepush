@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "prepush"
-version = "1.0.1"
+version = "1.0.2"
 description = "check, which ci workflows will be triggered after your push"
 readme = "README.md"
 authors = [{ name = "Dhanush Arivappagari", email = "4rivappa@proton.me" }]
@@ -19,7 +19,7 @@ dependencies = [ "pyyaml" ]
 requires-python = ">=3.6"
 
 [project.urls]
-Homepage = "https://github.com/4rivappa/pre-push"
+Homepage = "https://github.com/4rivappa/prepush"
 
 [project.scripts]
 prepush = "prepush.__main__:main"
