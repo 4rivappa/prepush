@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "prepush"
-version = "1.0.2"
+version = "1.0.3"
 description = "check, which ci workflows will be triggered after your push"
 readme = "README.md"
 authors = [{ name = "Dhanush Arivappagari", email = "4rivappa@proton.me" }]
