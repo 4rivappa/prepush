@@ -1,7 +1,7 @@
 import subprocess
 import os
 import yaml
-from pathlib import PurePath
+import fnmatch
 
 def list_workflow_yaml_files(directory):
     try:
@@ -33,16 +33,16 @@ def cal_changed_files() -> list[str]:
                 return_files.append(file.strip())
     return return_files
 
-def cal_valid_paths(workflow_dir):
+def cal_valid_patterns(workflow_dir) -> dict:
     return_dict = dict()
     for file in list_workflow_yaml_files(workflow_dir):
         with open(workflow_dir + file, 'r') as file_stream:
             data = yaml.load(file_stream, Loader=yaml.CLoader)
             all_paths = []
             if True in data:
-                if "push" in data[True]:
-                    if "paths" in data[True]["push"]:
-                        for path in data[True]["push"]["paths"]:
+                if isinstance(data[True], dict) and 'push' in data[True]:
+                    if isinstance(data[True]['push'], dict) and 'paths' in data[True]['push']:
+                        for path in data[True]['push']['paths']:
                             all_paths.append(path)
                     elif all_paths == []:
                         all_paths.append('*')
@@ -57,16 +57,18 @@ def main():
         git_root_dir = git_root_dir.strip()
 
     return_set = set()
-    files = cal_changed_files()
-    # print(files)
-    paths = cal_valid_paths(git_root_dir + '/.github/workflows/')
-    for workflow in paths:
-        for path in paths[workflow]:
-            for file in files:
-                if PurePath(file).match(path):
+    mod_files = cal_changed_files()
+    patterns = cal_valid_patterns(git_root_dir + '/.github/workflows/')
+    for workflow in patterns:
+        for pattern in patterns[workflow]:
+            for file in mod_files:
+                pattern = pattern.lstrip('./')
+                if fnmatch.fnmatch(file, pattern):
                     return_set.add(workflow)
     if len(return_set) == 0:
-        print("no workflows will be triggered")
+        print("No workflows will be triggered")
+    else:
+        print("Below workflows will be triggered ... ", "\n")
     for workflow in return_set:
         print(workflow)
 
